@@ -17,7 +17,7 @@ let registerUser = async (req, res) => {
     let userData = await Users.create({
       fullname: body.fullname,
       email: body.email,
-      password: bcrypt.hashSync(body.password, 8)
+      password: bcrypt.hashSync(body.password, 8),
     });
     const token = jwt.sign(
       { fullname: body.fullname, email: body.email },
@@ -37,7 +37,7 @@ let registerUser = async (req, res) => {
 const userSign = async (req, res) => {
   const { body } = req;
   try {
-    const userExists = await Users.findOne({ email: body.email });
+    const userExists = await Users.findOne({ where: { email: body.email } });
     if (!userExists) {
       res.status(404).send({ message: "User Not found." });
       return;
@@ -62,7 +62,7 @@ const userSign = async (req, res) => {
     );
     const data = { ...userExists.dataValues, token };
     delete data.password;
-    res.status(200).json({ message: "User sign in successfully",data });
+    res.status(200).json({ message: "User sign in successfully", data });
   } catch (error) {
     res.status(401).json({ error });
   }
